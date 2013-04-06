@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-keys@xelio
 // @name           IITC plugin: Keys
-// @version        0.1.0.20130406.073301
+// @version        0.1.0.20130406.074805
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/keys.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/keys.user.js
-// @description    [naglfar-2013-04-06-073301] Store portal keys
+// @description    [naglfar-2013-04-06-074805] Store portal keys
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

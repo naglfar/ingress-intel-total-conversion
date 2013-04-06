@@ -2,6 +2,8 @@ package com.cradle.iitc_mobile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -118,7 +120,7 @@ public class IITC_Mobile extends Activity {
 		ArrayList<String> plugins = new ArrayList<String>();
 
 		for (int i = 0; i < assets.length; i += 1) {
-			if (!assets[i].equals("iitc.js") && assets[i].substring(assets[i].length() - 3).equals(".js")) {
+			if (!assets[i].equals("total-conversion-build.user.js") && assets[i].substring(assets[i].length() - 3).equals(".js")) {
 				plugins.add(assets[i]);
 				Log.d(this.getClass().getSimpleName(), "plugin " + i + " :" + assets[i]);
 			}
@@ -230,10 +232,23 @@ public class IITC_Mobile extends Activity {
 		}
 	}
 
-	private boolean[] getSelectedItems() {
+	public static boolean[] getSelectedItems() {
 		boolean[] selected_plugins = new boolean[plugins_list.length];
+
+		Set<String> default_selected = new HashSet<String>();
+		default_selected.add("ap-list.user.js");
+		default_selected.add("compute-ap-stats.user.js");
+		default_selected.add("guess-player-levels.user.js");
+		default_selected.add("player-tracker.user.js");
+		default_selected.add("portal-level-numbers.user.js");
+		default_selected.add("portals-list.user.js");
+		default_selected.add("reso-energy-pct-in-portal-detail.user.js");
+		default_selected.add("scoreboard.user.js");
+		default_selected.add("show-address.user.js");
+		default_selected.add("show-portal-weakness.user.js");
+
 		for (int i = 0; i < plugins_list.length; i++) {
-			selected_plugins[i] = mPrefs.getBoolean(plugins_list[i], true);
+			selected_plugins[i] = mPrefs.getBoolean(plugins_list[i], default_selected.contains(plugins_list[i]));
 		}
 		return selected_plugins;
 	}

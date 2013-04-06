@@ -3,7 +3,6 @@ package com.cradle.iitc_mobile;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Scanner;
@@ -12,6 +11,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.http.SslError;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -62,20 +62,14 @@ public class IITC_WebViewClient extends WebViewClient {
 			URL url = new URL(iitc_source);
 			sb.append(new Scanner(url.openStream(), "UTF-8").useDelimiter("\\A").next());
 		} else {
-			/*InputStream input;
-			input = c.getAssets().open("iitc.js");
-			int size = input.available();
-			byte[] buffer = new byte[size];
-			input.read(buffer);
-			input.close();
-			js = new String(buffer);*/
-			sb.append(getFile("iitc.js"));
+			sb.append(getFile("total-conversion-build.user.js"));
 		}
 
 		this.js = sb.toString();
 
+		boolean[] plugins = IITC_Mobile.getSelectedItems();
 		for (int i = 0; i < IITC_Mobile.plugins_list.length; i++) {
-			if (IITC_Mobile.mPrefs.getBoolean(IITC_Mobile.plugins_list[i], true)) {
+			if (plugins[i]) {
 				sb.append("\n");
 				// FIXME: setTimeout solves just about everything when it comes to js
 				sb.append("window.setTimeout(function() {");

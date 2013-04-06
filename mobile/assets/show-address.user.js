@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-show-address@vita10gy
 // @name           IITC plugin: show portal address in sidebar
-// @version        0.2.2.20130405.175628
+// @version        0.2.2.20130406.074805
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
-// @updateURL      none
-// @downloadURL    none
-// @description    [local-2013-04-05-175628] Portal address will show in the sidebar.
+// @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/show-address.meta.js
+// @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/show-address.user.js
+// @description    [naglfar-2013-04-06-074805] Portal address will show in the sidebar.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

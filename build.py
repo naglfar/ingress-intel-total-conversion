@@ -15,29 +15,29 @@ from buildsettings import buildSettings
 
 # load option local settings file
 try:
-    from localbuildsettings import buildSettings as localBuildSettings
-    buildSettings.update(localBuildSettings)
+	from localbuildsettings import buildSettings as localBuildSettings
+	buildSettings.update(localBuildSettings)
 except ImportError:
-    pass
+	pass
 
 # load default build
 try:
-    from localbuildsettings import defaultBuild
+	from localbuildsettings import defaultBuild
 except ImportError:
-    defaultBuild = None
+	defaultBuild = None
 
 
 buildName = defaultBuild
 
 # build name from command line
 if len(sys.argv) == 2:	# argv[0] = program, argv[1] = buildname, len=2
-    buildName = sys.argv[1]
+	buildName = sys.argv[1]
 
 
 if buildName is None or not buildName in buildSettings:
-    print ("Usage: build.py buildname")
-    print (" available build names: %s" % ', '.join(buildSettings.keys()))
-    sys.exit(1)
+	print ("Usage: build.py buildname")
+	print (" available build names: %s" % ', '.join(buildSettings.keys()))
+	sys.exit(1)
 
 settings = buildSettings[buildName]
 
@@ -55,64 +55,66 @@ buildMobile = settings.get('buildMobile')
 
 
 def readfile(fn):
-    with io.open(fn, 'Ur', encoding='utf8') as f:
-        return f.read()
+	with io.open(fn, 'Ur', encoding='utf8') as f:
+		return f.read()
 
 def loaderString(var):
-    fn = var.group(1)
-    return readfile(fn).replace('\n', '\\n').replace('\'', '\\\'')
+	fn = var.group(1)
+	return readfile(fn).replace('\n', '\\n').replace('\'', '\\\'')
 
 def loaderRaw(var):
-    fn = var.group(1)
-    return readfile(fn)
+	fn = var.group(1)
+	return readfile(fn)
 
 def loaderImage(var):
-    fn = var.group(1)
-    return 'data:image/png;base64,{0}'.format(base64.encodestring(open(fn, 'rb').read()).decode('utf8').replace('\n', ''))
+	fn = var.group(1)
+	return 'data:image/png;base64,{0}'.format(base64.encodestring(open(fn, 'rb').read()).decode('utf8').replace('\n', ''))
 
 def loadCode(ignore):
-    return '\n\n'.join(map(readfile, glob.glob('code/*')))
+	return '\n\n'.join(map(readfile, glob.glob('code/*')))
 
 
 def extractUserScriptMeta(var):
-    m = re.search ( r"//[ \t]*==UserScript==\n.*?//[ \t]*==/UserScript==\n", var, re.MULTILINE|re.DOTALL )
-    return m.group(0)
+	m = re.search ( r"//[ \t]*==UserScript==\n.*?//[ \t]*==/UserScript==\n", var, re.MULTILINE|re.DOTALL )
+	return m.group(0)
 
 
 
 def doReplacements(script,updateUrl,downloadUrl):
 
-    script = re.sub('@@INJECTCODE@@',loadCode,script)
+	script = re.sub('@@INJECTCODE@@',loadCode,script)
 
-    script = re.sub('@@INCLUDERAW:([0-9a-zA-Z_./-]+)@@', loaderRaw, script)
-    script = re.sub('@@INCLUDESTRING:([0-9a-zA-Z_./-]+)@@', loaderString, script)
-    script = re.sub('@@INCLUDEIMAGE:([0-9a-zA-Z_./-]+)@@', loaderImage, script)
+	script = re.sub('@@INCLUDERAW:([0-9a-zA-Z_./-]+)@@', loaderRaw, script)
+	script = re.sub('@@INCLUDESTRING:([0-9a-zA-Z_./-]+)@@', loaderString, script)
+	script = re.sub('@@INCLUDEIMAGE:([0-9a-zA-Z_./-]+)@@', loaderImage, script)
 
-    script = script.replace('@@BUILDDATE@@', buildDate)
-    script = script.replace('@@DATETIMEVERSION@@', dateTimeVersion)
+	script = script.replace('@@BUILDDATE@@', buildDate)
+	script = script.replace('@@DATETIMEVERSION@@', dateTimeVersion)
 
-    if resourceUrlBase:
-        script = script.replace('@@RESOURCEURLBASE@@', resourceUrlBase)
-    else:
-        if '@@RESOURCEURLBASE@@' in script:
-            raise Exception("Error: '@@RESOURCEURLBASE@@' found in script, but no replacement defined")
+	if resourceUrlBase:
+		script = script.replace('@@RESOURCEURLBASE@@', resourceUrlBase)
+	else:
+		if '@@RESOURCEURLBASE@@' in script:
+			raise Exception("Error: '@@RESOURCEURLBASE@@' found in script, but no replacement defined")
 
-    script = script.replace('@@BUILDNAME@@', buildName)
+	script = script.replace('@@BUILDNAME@@', buildName)
 
-    script = script.replace('@@UPDATEURL@@', updateUrl)
-    script = script.replace('@@DOWNLOADURL@@', downloadUrl)
+	script = script.replace('@@UPDATEURL@@', updateUrl)
+	script = script.replace('@@DOWNLOADURL@@', downloadUrl)
 
-    return script
+	return script
 
 
 def saveScriptAndMeta(script,fn,metafn):
-    with io.open(fn, 'w', encoding='utf8') as f:
-        f.write(script)
+	saveScript(script, fn)
 
-    with io.open(metafn, 'w', encoding='utf8') as f:
-        meta = extractUserScriptMeta(script)
-        f.write(meta)
+	with io.open(metafn, 'w', encoding='utf8') as f:
+		meta = extractUserScriptMeta(script)
+		f.write(meta)
 
+def saveScript(script, fn):
+	with io.open(fn, 'w', encoding='utf8') as f:
+		f.write(script)	
 
 outDir = os.path.join('build', buildName)
 
@@ -121,16 +123,16 @@ outDir = os.path.join('build', buildName)
 
 # first, delete any existing build
 if os.path.exists(outDir):
-    shutil.rmtree(outDir)
+	shutil.rmtree(outDir)
 
 # copy the 'dist' folder, if it exists
 if os.path.exists('dist'):
-    # this creates the target directory (and any missing parent dirs)
-    # FIXME? replace with manual copy, and any .css and .js files are parsed for replacement tokens?
-    shutil.copytree('dist', outDir)
+	# this creates the target directory (and any missing parent dirs)
+	# FIXME? replace with manual copy, and any .css and .js files are parsed for replacement tokens?
+	shutil.copytree('dist', outDir)
 else:
-    # no 'dist' folder - so create an empty target folder
-    os.makedirs(outDir)
+	# no 'dist' folder - so create an empty target folder
+	os.makedirs(outDir)
 
 
 # load main.js, parse, and create main total-conversion-build.user.js
@@ -142,43 +144,46 @@ main = doReplacements(main,downloadUrl=downloadUrl,updateUrl=updateUrl)
 
 saveScriptAndMeta(main, os.path.join(outDir,'total-conversion-build.user.js'), os.path.join(outDir,'total-conversion-build.meta.js'))
 
+mobileDir = os.path.join('mobile', 'assets')
+saveScript(main, os.path.join(mobileDir,'total-conversion-build.user.js'))
 
 # for each plugin, load, parse, and save output
 os.mkdir(os.path.join(outDir,'plugins'))
 
 for fn in glob.glob("plugins/*.user.js"):
-    script = readfile(fn)
+	script = readfile(fn)
 
-    downloadUrl = distUrlBase and distUrlBase + '/' + fn.replace("\\","/") or 'none'
-    updateUrl = distUrlBase and downloadUrl.replace('.user.js', '.meta.js') or 'none'
-    script = doReplacements(script, downloadUrl=downloadUrl, updateUrl=updateUrl)
+	downloadUrl = distUrlBase and distUrlBase + '/' + fn.replace("\\","/") or 'none'
+	updateUrl = distUrlBase and downloadUrl.replace('.user.js', '.meta.js') or 'none'
+	script = doReplacements(script, downloadUrl=downloadUrl, updateUrl=updateUrl)
 
-    metafn = fn.replace('.user.js', '.meta.js')
-    saveScriptAndMeta(script, os.path.join(outDir,fn), os.path.join(outDir,metafn))
+	metafn = fn.replace('.user.js', '.meta.js')
+	saveScriptAndMeta(script, os.path.join(outDir,fn), os.path.join(outDir,metafn))
+	saveScript(script, os.path.join(mobileDir, fn.split(os.sep)[1]))
 
 
 # if we're building mobile too
 if buildMobile:
-    if buildMobile not in ['debug','release']:
-        raise Exception("Error: buildMobile must be 'debug' or 'release'")
+	if buildMobile not in ['debug','release']:
+		raise Exception("Error: buildMobile must be 'debug' or 'release'")
 
-    # first, copy the IITC script into the mobile folder. create the folder if needed
-    try:
-        os.makedirs("mobile/assets")
-    except:
-        pass
-    shutil.copy(os.path.join(outDir,"total-conversion-build.user.js"), "mobile/assets/iitc.js")
+	# first, copy the IITC script into the mobile folder. create the folder if needed
+	try:
+		os.makedirs("mobile/assets")
+	except:
+		pass
+	shutil.copy(os.path.join(outDir,"total-conversion-build.user.js"), "mobile/assets/iitc.js")
 
-    # TODO? also copy plugins - once the mobile app supports plugins, that is
+	# TODO? also copy plugins - once the mobile app supports plugins, that is
 
 
-    # now launch 'ant' to build the mobile project
-    retcode = os.system("ant -buildfile mobile/build.xml %s" % buildMobile)
+	# now launch 'ant' to build the mobile project
+	retcode = os.system("ant -buildfile mobile/build.xml %s" % buildMobile)
 
-    if retcode != 0:
-        print ("Error: mobile app failed to build. ant returned %d" % retcode)
-    else:
-        shutil.copy("mobile/bin/IITC_Mobile-%s.apk" % buildMobile, os.path.join(outDir,"IITC_Mobile-%s.apk" % buildMobile) )
+	if retcode != 0:
+		print ("Error: mobile app failed to build. ant returned %d" % retcode)
+	else:
+		shutil.copy("mobile/bin/IITC_Mobile-%s.apk" % buildMobile, os.path.join(outDir,"IITC_Mobile-%s.apk" % buildMobile) )
 
 
 # vim: ai si ts=4 sw=4 sts=4 et
