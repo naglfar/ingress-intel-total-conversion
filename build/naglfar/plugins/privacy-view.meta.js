@@ -1,9 +1,9 @@
 // ==UserScript==
 // @id             iitc-plugin-privacy-view@Scrool
 // @name           IITC plugin: Privacy view on Intel
-// @version        1.0.0.20130406.191415
+// @version        1.0.0.20130407.070904
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
-// @description    [naglfar-2013-04-06-191415] From Intel hides info which shouldn't leak to players of other fraction
+// @description    [naglfar-2013-04-07-070904] From Intel hides info which shouldn't leak to players of other fraction
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/privacy-view.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/privacy-view.user.js
 // @include        https://www.ingress.com/intel*

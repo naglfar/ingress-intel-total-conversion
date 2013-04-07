@@ -125,3 +125,12 @@ body {
 	max-width:100%!important;
 	overflow:auto!important;
 }
+.scrollArrow {
+	display:none;
+	position:fixed;
+	bottom:40px;
+	z-index:10000;
+}
+.leaflet-control-layers-expanded .scrollArrow {
+	display:block;
+}
