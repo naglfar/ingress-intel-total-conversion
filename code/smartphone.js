@@ -106,4 +106,29 @@ window.runOnSmartphonesAfterBoot = function() {
       });
     });
   });
+  
+  
+  var lcl = $('.leaflet-control-layers');
+  
+  lcl.css('position', 'relative');
+  lcl.parent().css({'height': '100%', 'width': '100%'});
+  /*
+  var scrollDown = $('<a>').text(' v ')
+	.css({'position':'absolute','bottom':50,'left':30,'z-index':9000})
+	.on("click", function(e) {
+		lcl[0].scrollTop += 50;
+		e.preventDefault();
+		return false;
+	  });
+  
+  var scrollTop = $('<a>').text(' ^ ')
+	.css({'position':'absolute','bottom':50,'left':0,'z-index':9000})
+	.on("click", function(e) {
+		lcl[0].scrollTop -= 50;
+		e.preventDefault();
+		return false;
+	  });
+  
+  //lcl.find('.leaflet-control-layers-list').eq(0).append(scrollTop).append(scrollDown);
+	lcl.parent().append(scrollTop).append(scrollDown);*/
 }

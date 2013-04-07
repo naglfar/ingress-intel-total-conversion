@@ -118,3 +118,10 @@ body {
 .leaflet-control-attribution {
 
 }
+
+.leaflet-control-container {height:100%;width:100%;}
+.leaflet-control-layers-expanded {
+	max-height:80%!important;
+	max-width:100%!important;
+	overflow:auto!important;
+}
