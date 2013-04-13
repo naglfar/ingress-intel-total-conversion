@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-guess-player-levels@breunigs
 // @name           IITC plugin: guess player level
-// @version        0.4.0.20130407.070904
+// @version        0.4.0.20130413.093839
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/guess-player-levels.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/guess-player-levels.user.js
-// @description    [naglfar-2013-04-07-070904] Tries to determine player levels from the data available in the current view
+// @description    [naglfar-2013-04-13-093839] Tries to determine player levels from the data available in the current view
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -23,7 +23,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 window.plugin.guessPlayerLevels = function() {};
 
 window.plugin.guessPlayerLevels.setupCallback = function() {
-  $('#toolbox').append('<a onclick="window.plugin.guessPlayerLevels.guess()">guess player levels</a> ');
+  $('#toolbox').append(' <a onclick="window.plugin.guessPlayerLevels.guess()">Guess&nbsp;player&nbsp;levels</a>');
   addHook('portalAdded', window.plugin.guessPlayerLevels.extractPortalData);
 }
 

@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-ap-list@xelio
 // @name           IITC plugin: AP List
-// @version        0.5.1.20130407.070904
+// @version        0.5.1.20130413.093839
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/ap-list.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/ap-list.user.js
-// @description    [naglfar-2013-04-07-070904] List top 10 portals by AP of either faction. Other functions and controls please refer to the Userguide.
+// @description    [naglfar-2013-04-13-093839] List top 10 portals by AP of either faction. Other functions and controls please refer to the Userguide.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -200,7 +200,7 @@ window.plugin.apList.getPortalLink = function(portal) {
   var latlng = [portal.locationE6.latE6/1E6, portal.locationE6.lngE6/1E6].join();
   var jsSingleClick = 'window.plugin.apList.selectPortal(\''+portal.guid+'\');return false';
   var jsDoubleClick = 'window.zoomToAndShowPortal(\''+portal.guid+'\', ['+latlng+']);return false';
-  var perma = 'https://ingress.com/intel?latE6='+portal.locationE6.latE6
+  var perma = '/intel?latE6='+portal.locationE6.latE6
             +'&lngE6='+portal.locationE6.lngE6+'&z=17&pguid='+portal.guid;
   //Use Jquery to create the link, which escape characters in TITLE and ADDRESS of portal
   var a = $('<a>',{

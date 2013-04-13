@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-player-tracker@breunigs
 // @name           IITC Plugin: Player tracker
-// @version        0.9.2.20130407.070904
+// @version        0.9.2.20130413.093839
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/player-tracker.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/player-tracker.user.js
-// @description    [naglfar-2013-04-07-070904] Draws trails for the path a user went onto the map. Only draws the last hour. Does not request chat data on its own, even if that would be useful.
+// @description    [naglfar-2013-04-13-093839] Draws trails for the path a user went onto the map. Only draws the last hour. Does not request chat data on its own, even if that would be useful.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -81,6 +81,8 @@ d,g,f;if(null!=c.indexOf)return c.indexOf(b);a=g=0;for(f=c.length;g<f;a=++g)if(d
     window.plugin.playerTracker.zoomListener();
   });
   window.plugin.playerTracker.zoomListener();
+  
+  plugin.playerTracker.setupUserSearch();
 }
 
 window.plugin.playerTracker.stored = {};
@@ -360,8 +362,57 @@ window.plugin.playerTracker.handleData = function(data) {
   plugin.playerTracker.drawData();
 }
 
+window.plugin.playerTracker.findUserPosition = function(nick) {
+  nick = nick.toLowerCase();
+  var foundPlayerData = undefined;
+  $.each(plugin.playerTracker.stored, function(pguid, playerData) {
+    if (playerData.nick.toLowerCase() === nick) {
+      foundPlayerData = playerData;
+      return false;
+    }
+  });
+  
+  if (!foundPlayerData) {
+    return false;
+  }
+  
+  var evtsLength = foundPlayerData.events.length;
+  var last = foundPlayerData.events[evtsLength-1];
+  return plugin.playerTracker.getLatLngFromEvent(last);
+}
 
+window.plugin.playerTracker.centerMapOnUser = function(nick) {
+  var position = plugin.playerTracker.findUserPosition(nick);
+  
+  if (position === false) {
+    return false;
+  }
+  
+  map.setView(position, map.getZoom());
+}
 
+window.plugin.playerTracker.onNicknameClicked = function(info) {
+  if (info.event.ctrlKey) {
+    plugin.playerTracker.centerMapOnUser(info.nickname);
+    return false;
+  }
+}
+
+window.plugin.playerTracker.onGeoSearch = function(search) {
+  if (/^@/.test(search)) {
+    plugin.playerTracker.centerMapOnUser(search.replace(/^@/, ''));
+    return false;
+  }
+}
+
+window.plugin.playerTracker.setupUserSearch = function() {
+  addHook('nicknameClicked', window.plugin.playerTracker.onNicknameClicked);
+  addHook('geoSearch', window.plugin.playerTracker.onGeoSearch);
+  
+  var geoSearch = $('#geosearch');
+  var beforeEllipsis = /(.*)…/.exec(geoSearch.attr('placeholder'))[1];
+  geoSearch.attr('placeholder', beforeEllipsis + ' or @player…');
+}
 
 
 var setup = plugin.playerTracker.setup;

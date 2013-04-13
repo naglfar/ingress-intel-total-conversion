@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-portals-count@yenky
 // @name           IITC plugin: Show total counts of portals
-// @version        0.0.6.20130407.070904
+// @version        0.0.7.20130413.093839
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/portal-counts.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/portal-counts.user.js
-// @description    [naglfar-2013-04-07-070904] Display a list of all localized portals by level and faction
+// @description    [naglfar-2013-04-13-093839] Display a list of all localized portals by level and faction
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*

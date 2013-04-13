@@ -8,7 +8,9 @@ import java.net.URL;
 import java.util.Scanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,13 +24,12 @@ public class IITC_WebViewClient extends WebViewClient {
 		"body, #dashboard_container, #map_canvas { background: #000 !important; }".getBytes());
 	private static final ByteArrayInputStream empty = new ByteArrayInputStream("".getBytes());
 
-	private Context ctx;
 	private WebResourceResponse iitcjs;
-
-	String js;
+	private String js = null;
+	Context context;
 
 	public IITC_WebViewClient(Context c) {
-		this.ctx = c;
+		this.context = c;
 		try {
 			loadIITC_JS(c);
 		} catch(IOException e) {
@@ -98,7 +99,7 @@ public class IITC_WebViewClient extends WebViewClient {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new InputStreamReader(ctx.getAssets().open(fileName)));
+			br = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
 			String line = "";
 			Integer i = 0;
 			while ((line = br.readLine()) != null) {
@@ -147,6 +148,19 @@ public class IITC_WebViewClient extends WebViewClient {
 			return new WebResourceResponse("text/plain", "UTF-8", empty);
 		} else {
 			return super.shouldInterceptRequest(view, url);
+		}
+	}
+
+	// start non-ingress-intel-urls in another app...
+	@Override
+	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		if (url.contains("ingress.com")) {
+			return false;
+		} else {
+			Log.d("iitcm", "no ingress intel link, start external app to load url: " + url);
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+			context.startActivity(intent);
+			return true;
 		}
 	}
 }

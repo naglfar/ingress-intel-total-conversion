@@ -12,9 +12,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.NetworkInfo.State;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +31,8 @@ public class IITC_Mobile extends Activity {
 	private boolean back_button_pressed = false;
 	private boolean desktop = false;
 	private OnSharedPreferenceChangeListener listener;
+
+	private String intel_url = "https://www.ingress.com/intel";
 
 	static String[] plugins_list;
 	static SharedPreferences mPrefs;
@@ -53,9 +55,7 @@ public class IITC_Mobile extends Activity {
 			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 				if (key.equals("pref_force_desktop"))
 					desktop = sharedPreferences.getBoolean("pref_force_desktop", false);
-				// reload intel map
-				iitc_view.loadUrl(addUrlParam("https://www.ingress.com/intel"));
-				injectJS();
+				IITC_Mobile.this.loadUrl(intel_url);
 			}
 		};
 		mPrefs.registerOnSharedPreferenceChangeListener(listener);
@@ -70,47 +70,71 @@ public class IITC_Mobile extends Activity {
 			Intent intent = getIntent();
 			String action = intent.getAction();
 			if (Intent.ACTION_VIEW.equals(action)) {
+
 				Uri uri = intent.getData();
 				String url = uri.toString();
-				if (intent.getScheme().equals("http://"))
+				if (intent.getScheme().equals("http://")) {
 					url = url.replace("http://", "https://");
-				Log.d("Intent received", "url: " + url);
-				if (url.contains("ingress.com")) {
-					Log.d("Intent received", "loading url...");
-					iitc_view.loadUrl(addUrlParam(url));
 				}
-			}
-			else {
-				Log.d("No Intent call", "loading https://www.ingress.com/intel");
-				iitc_view.loadUrl(addUrlParam("https://www.ingress.com/intel"));
+				Log.d("iitcm", "intent received url: " + url);
+				if (url.contains("ingress.com")) {
+					Log.d("iitcm", "loading url...");
+					this.loadUrl(url);
+				}
+
+			} else {
+				Log.d("iitcm", "no intent...loading " + intel_url);
+				this.loadUrl(intel_url);
 			}
 		}
 	}
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		// enough idle...let's do some work
+		Log.d("iitcm", "resuming...setting reset idleTimer");
 		iitc_view.loadUrl("javascript: window.idleTime = 0");
 		iitc_view.loadUrl("javascript: window.renderUpdateStatus()");
-		super.onResume();
 	}
 
 	@Override
 	protected void onStop() {
 		ConnectivityManager conMan = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		State mobile = conMan.getNetworkInfo(0).getState();
-		State wifi = conMan.getNetworkInfo(1).getState();
+		NetworkInfo mobile = conMan.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		NetworkInfo wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-		if (mobile == NetworkInfo.State.CONNECTED || mobile == NetworkInfo.State.CONNECTING) {
+		// check if Mobile or Wifi module is available..then handle states
+		// TODO: theory...we do not have to check for a Wifi module...every android device should have one
+		if (mobile != null) {
+			Log.d("iitcm", "mobile internet module detected...check states");
+			if (mobile.getState() == NetworkInfo.State.CONNECTED || mobile.getState() == NetworkInfo.State.CONNECTING) {
+				Log.d("iitcm", "connected to mobile net...abort all running requests");
 			// cancel all current requests
 			iitc_view.loadUrl("javascript: window.requests.abort()");
 			// set idletime to maximum...no need for more
 			iitc_view.loadUrl("javascript: window.idleTime = 999");
-		} else if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING) {
+			} else if (wifi.getState() == NetworkInfo.State.CONNECTED || wifi.getState() == NetworkInfo.State.CONNECTING) {
 			iitc_view.loadUrl("javascript: window.idleTime = 999");
 		}
+		} else {
+			Log.d("iitcm", "no mobile internet module detected...check wifi state");
+			if (wifi.getState() == NetworkInfo.State.CONNECTED || wifi.getState() == NetworkInfo.State.CONNECTING) {
+				iitc_view.loadUrl("javascript: window.idleTime = 999");
+			}
+		}
+		Log.d("iitcm", "stopping iitcm");
 		super.onStop();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+
+		Log.d("iitcm", "configuration changed...restoring...reset idleTimer");
+		iitc_view.loadUrl("javascript: window.idleTime = 0");
+		iitc_view.loadUrl("javascript: window.renderUpdateStatus()");
 	}
 
 	private void initPluginsList() {
@@ -174,26 +198,25 @@ public class IITC_Mobile extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.reload_button:
-			iitc_view.loadUrl(addUrlParam("https://www.ingress.com/intel"));
-			injectJS();
+			this.loadUrl(intel_url);
 			return true;
 		case R.id.select_plugins:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			final SharedPreferences.Editor editor = mPrefs.edit();
 			builder
 				.setTitle(R.string.select_plugins)
 				.setMultiChoiceItems(plugins_list, getSelectedItems(),
 					new DialogInterface.OnMultiChoiceClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-							mPrefs.edit().putBoolean(plugins_list[which], isChecked).commit();
+							editor.putBoolean(plugins_list[which], isChecked);
 						}
 					})
 
 				.setPositiveButton(R.string.reload, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						Toast.makeText(IITC_Mobile.this, "Reloading...", Toast.LENGTH_SHORT).show();
-						iitc_view.loadUrl(addUrlParam("https://www.ingress.com/intel"));
-						injectJS();
+						editor.commit();
 					}
 				})
 				.setNegativeButton(R.string.cancel, null);
@@ -212,6 +235,7 @@ public class IITC_Mobile extends Activity {
 		case R.id.locate:
 			iitc_view.loadUrl("javascript: window.map.locate({setView : true, maxZoom: 13});");
 			return true;
+		// start settings activity
 		case R.id.settings:
 			Intent intent = new Intent(this, IITC_Settings.class);
 			intent.putExtra("iitc_version", iitc_view.getWebViewClient().getIITCVersion());
@@ -261,5 +285,13 @@ public class IITC_Mobile extends Activity {
 			return (url + "?vp=f");
 		else
 			return (url + "?vp=m");
+	}
+
+	public void loadUrl(String url) {
+		url = addUrlParam(url);
+		Log.d("iitcm", "injecting js...");
+		injectJS();
+		Log.d("iitcm", "loading url: " + url);
+		iitc_view.loadUrl(url);
 	}
 }
