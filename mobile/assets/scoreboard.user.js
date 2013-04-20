@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-scoreboard@vita10gy
 // @name           IITC plugin: show a localized scoreboard.
-// @version        0.1.6.20130413.095907
+// @version        0.1.6.20130420.124221
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/scoreboard.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/scoreboard.user.js
-// @description    [naglfar-2013-04-13-095907] A localized scoreboard.
+// @description    [naglfar-2013-04-20-124221] A localized scoreboard.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -389,7 +389,7 @@ window.plugin.scoreboard.fieldArea = function(field) {
 }
 
 var setup =  function() {
-  $('#toolbox').append(' <a onclick="window.plugin.scoreboard.display()">Scoreboard</a>');
+  $('#toolbox').append(' <a onclick="window.plugin.scoreboard.display()" title="Display a scoreboard per team for the current view">Scoreboard</a>');
   $('head').append('<style>' +
     '.ui-dialog-scoreboard {max-width:600px !important; width:600px !important;}' +
     '#scoreboard table {margin-top:10px;	border-collapse: collapse; empty-cells: show; width:100%; clear: both;}' +

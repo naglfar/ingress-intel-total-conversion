@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-portals-list@teo96
 // @name           IITC plugin: show list of portals
-// @version        0.0.10.20130413.095907
+// @version        0.0.10.20130420.124221
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/portals-list.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/portals-list.user.js
-// @description    [naglfar-2013-04-13-095907] Display a sortable list of all localized portails with team, level, resonators informations
+// @description    [naglfar-2013-04-20-124221] Display a sortable list of all localized portails with team, level, resonators informations
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -403,7 +403,7 @@ window.plugin.portalslist.getPortalLink = function(portal,guid) {
 }
 
 var setup =  function() {
-  $('#toolbox').append(' <a onclick="window.plugin.portalslist.displayPL(0)">Portals&nbsp;list</a>');
+  $('#toolbox').append(' <a onclick="window.plugin.portalslist.displayPL(0)" title="Display a list of portals in the current view">Portals list</a>');
   $('head').append('<style>' + 
     '.ui-dialog-portalslist {position: absolute !important; top: 10px !important; left: 30px !important;max-width:800px !important; width:733px !important;}' + 
     '#portalslist table {margin-top:5px;	border-collapse: collapse; empty-cells: show; width:100%; clear: both;}' +

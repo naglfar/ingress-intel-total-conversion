@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-player-tracker@breunigs
 // @name           IITC Plugin: Player tracker
-// @version        0.9.2.20130413.095907
+// @version        0.9.2.20130420.124221
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/player-tracker.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/player-tracker.user.js
-// @description    [naglfar-2013-04-13-095907] Draws trails for the path a user went onto the map. Only draws the last hour. Does not request chat data on its own, even if that would be useful.
+// @description    [naglfar-2013-04-20-124221] Draws trails for the path a user went onto the map. Only draws the last hour. Does not request chat data on its own, even if that would be useful.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -285,6 +285,7 @@ window.plugin.playerTracker.drawData = function() {
     if(window.plugin.guessPlayerLevels !== undefined &&
        window.plugin.guessPlayerLevels.fetchLevelByPlayer !== undefined) {
       var playerLevel = window.plugin.guessPlayerLevels.fetchLevelByPlayer(pguid);
+      if (playerLevel === undefined) playerLevel = 1;  //if player level unknown, assume level 1
       if(playerLevel !== undefined) {
         title += '<span style="font-weight:bold;margin-left:10px;">Level '
           + playerLevel

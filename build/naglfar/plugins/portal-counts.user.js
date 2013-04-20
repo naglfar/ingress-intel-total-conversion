@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             iitc-plugin-portals-count@yenky
 // @name           IITC plugin: Show total counts of portals
-// @version        0.0.7.20130413.095907
+// @version        0.0.7.20130420.124221
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/portal-counts.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/plugins/portal-counts.user.js
-// @description    [naglfar-2013-04-13-095907] Display a list of all localized portals by level and faction
+// @description    [naglfar-2013-04-20-124221] Display a list of all localized portals by level and faction
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -99,7 +99,7 @@ window.plugin.portalcounts.getPortals = function(){
 }
 
 var setup =  function() {
-  $('#toolbox').append(' <a onclick="window.plugin.portalcounts.getPortals()">Portal&sbsp;counts</a>');
+  $('#toolbox').append(' <a onclick="window.plugin.portalcounts.getPortals()" title="Display a summary of portals in the current view">Portal counts</a>');
   $('head').append('<style>' + 
     '#portalcounts table {margin-top:5px; border-collapse: collapse; empty-cells: show; width:100%; clear: both;}' +
     '#portalcounts table td, #portalcounts table th {border-bottom: 1px solid #0b314e; padding:3px; color:white; background-color:#1b415e}' +
