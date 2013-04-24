@@ -132,8 +132,8 @@ window.setupMap = function() {
 		mqMap,
 		new L.Google('INGRESS'),
 		new L.Google('ROADMAP'),
-		new L.Google('SATELLITE'),
-		new L.Google('HYBRID')
+		new L.Google('SATELLITE',{maxZoom:20}),
+		new L.Google('HYBRID',{maxZoom:20})
   ];
 
 

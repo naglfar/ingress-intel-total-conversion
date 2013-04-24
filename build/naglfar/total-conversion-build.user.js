@@ -1,11 +1,11 @@
 // ==UserScript==
 // @id             ingress-intel-total-conversion@jonatkins
 // @name           IITC: Ingress intel map total conversion
-// @version        0.10.5.20130420.124221
+// @version        0.11.2.20130424.160159
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/total-conversion-build.meta.js
 // @downloadURL    https://github.com/naglfar/ingress-intel-total-conversion/tree/master/build/naglfar/total-conversion-build.user.js
-// @description    [naglfar-2013-04-20-124221] Total conversion for the ingress intel map.
+// @description    [naglfar-2013-04-24-160159] Total conversion for the ingress intel map.
 // @include        http://www.ingress.com/intel*
 // @include        https://www.ingress.com/intel*
 // @match          http://www.ingress.com/intel*
@@ -16,7 +16,7 @@
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if(document.getElementsByTagName('html')[0].getAttribute('itemscope') != null)
   throw('Ingress Intel Website is down, not a userscript issue.');
-window.iitcBuildDate = '2013-04-20-124221';
+window.iitcBuildDate = '2013-04-24-160159';
 
 // disable vanilla JS
 window.onload = function() {};
@@ -58,7 +58,7 @@ for(var i = 0; i < d.length; i++) {
 // possible without requiring scripts.
 document.getElementsByTagName('head')[0].innerHTML = ''
   + '<title>Ingress Intel Map</title>'
-  + '<style>/* general rules ******************************************************/\n\nhtml, body, #map {\n  height: 100%;\n  width: 100%;\n  overflow: hidden; /* workaround for #373 */\n  background: #0e3d4e;\n}\n\nbody {\n  font-size: 14px;\n  font-family: "coda",arial,helvetica,sans-serif;\n  margin: 0;\n}\n\n#scrollwrapper {\n  overflow-x: hidden;\n  overflow-y: auto;\n  position: fixed;\n  right: -38px;\n  top: 0;\n  width: 340px;\n  bottom: 45px;\n  z-index: 1001;\n  pointer-events: none;\n}\n\n#sidebar {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-left: 1px solid #20A8B1;\n  color: #888;\n  position: relative;\n  left: 0;\n  top: 0;\n  max-height: 100%;\n  overflow-y:scroll;\n  overflow-x:hidden;\n  z-index: 3000;\n  pointer-events: auto;\n}\n\n#sidebartoggle {\n  display: block;\n  padding: 20px 5px;\n  margin-top: -31px; /* -(toggle height / 2) */\n  line-height: 10px;\n  position: absolute;\n  top: 325px; /* (sidebar height / 2) */\n  z-index: 3001;\n  background-color: rgba(8, 48, 78, 0.9);\n  color: #FFCE00;\n  border: 1px solid #20A8B1;\n  border-right: none;\n  border-radius: 5px 0 0 5px;\n  text-decoration: none;\n  right: 301px; /* overwritten later by the script with SIDEBAR_WIDTH */\n}\n\n.enl {\n  color: #03fe03 !important;\n}\n\n.res {\n  color: #00c5ff !important;\n}\n\n.none {\n  color: #fff;\n}\n\na {\n  color: #ffce00;\n  cursor: pointer;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\n/* map display, required because GMaps uses a high z-index which is\n * normally above Leaflet’s vector pane */\n.leaflet-map-pane {\n  z-index: 1000;\n}\n\n.leaflet-control-layers-overlays label.disabled {\n  text-decoration: line-through;\n  cursor: help;\n}\n\n.help {\n  cursor: help;\n}\n\n.toggle {\n  display: block;\n  height: 0;\n  width: 0;\n}\n\n/* field mu count */\n.fieldmu {\n  color: #FFCE00;\n  font-size: 13px;\n  font-family: "coda",arial,helvetica,sans-serif; /*override leaflet-container */\n  text-align: center;\n  text-shadow: 0 0 0.2em black, 0 0 0.2em black, 0 0 0.2em black;\n  pointer-events: none;\n}\n\n\n/* chat ***************************************************************/\n\n#chatcontrols {\n  color: #FFCE00;\n  background: rgba(8, 48, 78, 0.9);\n  position: absolute;\n  left: 0;\n  z-index: 3001;\n  height: 26px;\n  padding-left:1px;\n}\n\n#chatcontrols.expand {\n  top: 0;\n  bottom: auto;\n}\n\n#chatcontrols a {\n  margin-left: -1px;\n  display: inline-block;\n  width: 94px;\n  text-align: center;\n  height: 24px;\n  line-height: 24px;\n  border: 1px solid #20A8B1;\n  vertical-align: top;\n}\n\n#chatcontrols a:first-child {\n  letter-spacing:-1px;\n  text-decoration: none !important;\n}\n\n#chatcontrols a.active {\n  border-color: #FFCE00;\n  border-bottom-width:0px;\n  font-weight:bold\n}\n\n#chatcontrols a.active + a {\n  border-left-color: #FFCE00\n}\n\n\n#chatcontrols .toggle {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  margin: 6px auto auto;\n}\n\n#chatcontrols .expand {\n  border-bottom: 10px solid #FFCE00;\n}\n\n#chatcontrols .shrink {\n  border-top: 10px solid #FFCE00;\n}\n\n\n#chat {\n  position: absolute;\n  width: 708px;\n  bottom: 23px;\n  left: 0;\n  z-index: 3000;\n  background: rgba(8, 48, 78, 0.9);\n  font-size: 12.6px;\n  color: #eee;\n  border: 1px solid #20A8B1;\n  border-bottom: 0;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\nem {\n  color: red;\n  font-style: normal;\n}\n\n#chat.expand {\n  height:auto;\n  top: 25px;\n}\n\n#chatpublic, #chatfull, #chatcompact {\n  display: none;\n}\n\n#chat > div {\n  overflow-x:hidden;\n  overflow-y:scroll;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 2px;\n  position:relative;\n}\n\n#chat table, #chatinput table {\n  width: 100%;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#chatinput table {\n  height: 100%;\n}\n\n#chat td, #chatinput td {\n  font-family: Verdana, sans-serif;\n  font-size: 12.6px;\n  vertical-align: top;\n  padding-bottom: 3px;\n}\n\n/* time */\n#chat td:first-child, #chatinput td:first-child {\n  width: 44px;\n  overflow: hidden;\n  padding-left: 2px;\n  color: #bbb;\n  white-space: nowrap;\n}\n\n#chat time {\n  cursor: help;\n}\n\n/* nick */\n#chat td:nth-child(2), #chatinput td:nth-child(2) {\n  width: 91px;\n  overflow: hidden;\n  padding-left: 2px;\n  white-space: nowrap;\n}\n\n#chat td .system_narrowcast {\n  color: #f66 !important;\n}\n\nmark {\n  background: transparent;\n}\n\n.invisep {\n  display: inline-block;\n  width: 1px;\n  height: 1px;\n  overflow:hidden;\n  color: transparent;\n}\n\n/* divider */\nsummary {\n  color: #bbb;\n  display: inline-block;\n  font-family: Verdana,sans-serif;\n  height: 16px;\n  overflow: hidden;\n  padding: 0 2px;\n  white-space: nowrap;\n  width: 100%;\n}\n\n#chatinput {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  padding: 0 2px;\n  background: rgba(8, 48, 78, 0.9);\n  width: 708px;\n  border: 1px solid #20A8B1;\n  z-index: 3001;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#chatinput td {\n  padding-bottom: 1px;\n  vertical-align: middle;\n}\n\n\n#chatinput input {\n  background: transparent;\n  font-size: 12.6px;\n  font-family: Verdana,sans-serif;\n  color: #EEEEEE;\n  width: 100%;\n  height: 100%;\n  padding:3px 4px 1px 4px;\n}\n\n\n\n/* sidebar ************************************************************/\n\n#sidebar > * {\n  border-bottom: 1px solid #20A8B1;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n\n\n#sidebartoggle .toggle {\n  border-bottom: 10px solid transparent;\n  border-top: 10px solid transparent;\n}\n\n#sidebartoggle .open {\n  border-right: 10px solid #FFCE00;\n}\n\n#sidebartoggle .close {\n  border-left: 10px solid #FFCE00;\n}\n\n/* player stats */\n#playerstat {\n  height: 30px;\n}\n\nh2 {\n  color: #ffce00;\n  font-size: 21px;\n  padding: 0 4px;\n  margin: 0;\n  cursor:help;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%;\n}\n\nh2 #name {\n  display: inline-block;\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 205px;\n  position: relative;\n}\n\nh2 #stats {\n  float: right;\n  height: 100%;\n  overflow: hidden;\n}\n\nh2 #signout {\n  font-size: 12px;\n  font-weight: normal;\n  line-height: 29px;\n  padding: 0 4px;\n  position: absolute;\n  top: 0;\n  right: 0;\n  background-color: rgba(8, 48, 78, 0.5);\n  display: none; /* starts hidden */\n}\n\nh2 sup, h2 sub {\n  display: block;\n  font-size: 11px;\n  margin-bottom: -2px;\n}\n\n\n/* gamestats */\n#gamestat {\n  height: 22px;\n}\n\n#gamestat span {\n  display: block;\n  float: left;\n  font-weight: bold;\n  cursor:help;\n  height: 21px;\n  line-height: 22px;\n}\n\n#gamestat .res {\n  background: #005684;\n  text-align: right;\n}\n\n#gamestat .enl {\n  background: #017f01;\n}\n\n\n/* geosearch input, and others */\ninput {\n  background-color: rgba(0, 0, 0, 0.3);\n  color: #ffce00;\n  height: 24px;\n  padding:0px 4px 0px 4px;\n  font-size: 12px;\n  border:0;\n  font-family:inherit;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#geosearch{\n  width:272px;\n  background-color: transparent;\n}\n#geosearchwrapper {\n  height:25px;  \n  background-color: rgba(0, 0, 0, 0.3);\n}\n#geosearchwrapper img{\n  vertical-align: bottom;\n  margin-bottom: 2px;\n  cursor: pointer;\n}\n::-webkit-input-placeholder {\n  font-style: italic;\n}\n\n:-moz-placeholder {\n  font-style: italic;\n}\n\n::-moz-placeholder {\n  font-style: italic;\n}\n\n.leaflet-control-layers input {\n  height: auto;\n  padding: 0;\n}\n\n\n/* portal title and image */\nh3 {\n  font-size: 16px;\n  padding: 0 4px;\n  margin:0;\n  height: 23px;\n  width: 100%;\n  overflow:hidden;\n  text-overflow: "~";\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n.imgpreview {\n  height: 190px;\n  background: no-repeat center center;\n  background-size: contain;\n  cursor: help;\n  overflow: hidden;\n}\n\n.imgpreview img.hide {\n  display: none;\n}\n\n#level {\n  font-size: 40px;\n  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;\n  display: block;\n  margin-right: 15px;\n  text-align:right;\n}\n\n/* portal mods */\n.mods {\n  margin: 3px auto 1px auto;\n  width: 296px;\n  height: 67px;\n  text-align: center;\n}\n\n.mods span {\n  background-color: rgba(0, 0, 0, 0.3);\n  /* can’t use inline-block because Webkit’s implementation is buggy and\n   * introduces additional margins in random cases. No clear necessary,\n   * as that’s solved by setting height on .mods. */\n  display: block;\n  float:left;\n  height: 63px;\n  margin: 0 2px;\n  overflow: hidden;\n  padding: 2px;\n  text-align: center;\n  width: 63px;\n  cursor:help;\n  border: 1px solid #666;\n}\n\n.mods span:not([title]) {\n  cursor: auto;\n}\n\n.res .mods span, .res .meter {\n  border: 1px solid #0076b6;\n}\n.enl .mods span, .enl .meter {\n  border: 1px solid #017f01;\n}\n\n/* random details, resonator details */\n#randdetails, #resodetails {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 0 4px;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#randdetails td, #resodetails td {\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 50%;\n  width: calc(50% - 62px);\n}\n\n#randdetails th, #resodetails th {\n  font-weight: normal;\n  text-align: right;\n  width: 62px;\n  padding:0px;\n  padding-right:4px;\n  padding-left:4px;\n}\n\n#randdetails th + th, #resodetails th + th {\n  text-align: left;\n  padding-right: 4px;\n  padding-left: 4px;\n}\n\n#randdetails td:first-child, #resodetails td:first-child {\n  text-align: right;\n  padding-left: 2px;\n}\n\n#randdetails td:last-child, #resodetails td:last-child {\n  text-align: left;\n  padding-right: 2px;\n}\n\n\n#randdetails {\n  margin-top: 4px;\n  margin-bottom: 5px;\n}\n\n\n#randdetails tt {\n  font-family: inherit;\n  cursor: help;\n}\n\n/* resonators */\n#resodetails {\n  margin-bottom: 0px;\n}\n\n.meter {\n  background: #000;\n  cursor: help;\n  display: inline-block;\n  height: 18px;\n  padding: 1px;\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  left: 0;\n  top: 0;\n}\n\n.meter span {\n  display: block;\n  height: 14px;\n}\n\n.meter-level {\n  position: absolute;\n  top: -2px;\n  left: 50%;\n  margin-left: -6px;\n  text-shadow: 0.0em 0.0em 0.3em #808080;\n}\n\n/* links below resos */\n\n.linkdetails {\n  margin-bottom: 0px;\n  text-align: center;\n}\n\n.linkdetails aside {\n  display: inline-block;\n  white-space: nowrap;\n  font-size: 12px;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n\n\n\n#toolbox {\n  font-size: 12px;\n  text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\n}\n\n#toolbox > a {\n  margin-left: 5px;\n  margin-right: 5px;\n  white-space: nowrap;\n}\n\n/* a common portal display takes this much space (prevents moving\n * content when first selecting a portal) */\n\n#portaldetails {\n  min-height: 485px;\n  position: relative; /* so the below \'#portaldetails .close\' is relative to this */\n}\n\n#portaldetails .close {\n  position: absolute;\n  top: -2px;\n  right: 2px;\n  cursor: pointer;\n  color: #FFCE00;\n  font-family: "Arial", sans;\n  font-size: 16px;\n}\n\n\n/* update status */\n#updatestatus {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-bottom: 0;\n  border-top: 1px solid #20A8B1;\n  border-left: 1px solid #20A8B1;\n  bottom: 0;\n  color: #ffce00;\n  font-size:13px;\n  padding: 4px;\n  position: fixed;\n  right: 0;\n  z-index:3002;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n\n/* preview */\n\n#largepreview {\n  left: 50%;\n  position: fixed;\n  top: 50%;\n  z-index: 2000;\n}\n#largepreview img {\n  box-shadow: 0 0 40px #000;\n  border: 2px solid #f8ff5e;\n  background-color: rgba(8, 48, 78, 0.9);  /* as some images - eg ZipCar - have transparency */\n}\n\n/* tooltips, dialogs */\n.ui-tooltip, .ui-dialog {\n  max-width: 300px;\n  position: absolute;\n  z-index: 9999;\n  background-color: rgba(8, 48, 78, 0.9);\n  border: 1px solid #20A8B1;\n  color: #eee;\n  font: 13px/15px "Helvetica Neue", Arial, Helvetica, sans-serif;\n  padding: 2px 4px;\n}\n\n.ui-tooltip, .ui-dialog a {\n  color: #FFCE00;\n}\n\n.ui-dialog {\n  padding: 0;\n  border-radius: 2px;\n}\n\n.ui-widget-overlay {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index:9998;\n  background:  #444;\n  opacity: 0.6;\n}\n\n.ui-dialog-titlebar {\n  display: none;\n}\n\n.ui-dialog-content {\n  padding: 12px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  max-height: 600px !important;\n  max-width: 700px !important;\n}\n\n.ui-dialog-buttonpane {\n  padding: 12px;\n  border-top: 1px solid #20A8B1;\n}\n\n.ui-dialog-buttonset {\n  text-align: right;\n}\n\n.ui-dialog-buttonset button,\n.ui-dialog-content button {\n  padding: 2px;\n  min-width: 80px;\n  color: #FFCE00;\n  border: 1px solid #FFCE00;\n  background-color: rgba(8, 48, 78, 0.9);\n}\n\n.ui-dialog-buttonset button:hover {\n  text-decoration: underline;\n}\n\ntd {\n  padding: 0;\n  vertical-align: top;\n}\n\ntd + td {\n  padding-left: 4px;\n}\n\n#qrcode > canvas {\n  border: 8px solid white;\n} \n\n/* redeem results *****************************************************/\n.redeem-result {\n  font-size: 14px;\n  font-family: arial,helvetica,sans-serif;\n  table-layout: fixed;\n}\n\n.redeem-result tr > td:first-child {\n  width: 50px;\n  text-align: right;\n}\n\n.pl_nudge_date {\n  background-color: #724510;\n  border-left: 1px solid #ffd652;\n  border-bottom: 1px solid #ffd652;\n  border-top: 1px solid #ffd652;\n  color: #ffd652;\n  display: inline-block;\n  float: left;\n  font-size: 12px;\n  height: 18px;\n  text-align: center;\n}\n\n.pl_nudge_pointy_spacer {\n  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\n  display: inline-block;\n  float: left;\n  height: 20px;\n  left: 47px;\n  width: 5px;\n}\n\n.pl_nudge_player {\n  cursor: pointer;\n}\n\n.pl_nudge_me {\n  color: #ffd652;\n}\n\n.RESISTANCE {\n  color: #00c2ff;\n}\n\n.ALIENS {\n  color: #28f428;\n}\n</style>'
+  + '<style>/* general rules ******************************************************/\n\nhtml, body, #map {\n  height: 100%;\n  width: 100%;\n  overflow: hidden; /* workaround for #373 */\n  background: #0e3d4e;\n}\n\nbody {\n  font-size: 14px;\n  font-family: "coda",arial,helvetica,sans-serif;\n  margin: 0;\n}\n\n#scrollwrapper {\n  overflow-x: hidden;\n  overflow-y: auto;\n  position: fixed;\n  right: -38px;\n  top: 0;\n  width: 340px;\n  bottom: 45px;\n  z-index: 1001;\n  pointer-events: none;\n}\n\n#sidebar {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-left: 1px solid #20A8B1;\n  color: #888;\n  position: relative;\n  left: 0;\n  top: 0;\n  max-height: 100%;\n  overflow-y:scroll;\n  overflow-x:hidden;\n  z-index: 3000;\n  pointer-events: auto;\n}\n\n#sidebartoggle {\n  display: block;\n  padding: 20px 5px;\n  margin-top: -31px; /* -(toggle height / 2) */\n  line-height: 10px;\n  position: absolute;\n  top: 325px; /* (sidebar height / 2) */\n  z-index: 3001;\n  background-color: rgba(8, 48, 78, 0.9);\n  color: #FFCE00;\n  border: 1px solid #20A8B1;\n  border-right: none;\n  border-radius: 5px 0 0 5px;\n  text-decoration: none;\n  right: 301px; /* overwritten later by the script with SIDEBAR_WIDTH */\n}\n\n.enl {\n  color: #03fe03 !important;\n}\n\n.res {\n  color: #00c5ff !important;\n}\n\n.none {\n  color: #fff;\n}\n\n.nickname {\n  cursor: pointer !important;\n}\n\na {\n  color: #ffce00;\n  cursor: pointer;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\n/* map display, required because GMaps uses a high z-index which is\n * normally above Leaflet’s vector pane */\n.leaflet-map-pane {\n  z-index: 1000;\n}\n\n.leaflet-control-layers-overlays label.disabled {\n  text-decoration: line-through;\n  cursor: help;\n}\n\n.help {\n  cursor: help;\n}\n\n.toggle {\n  display: block;\n  height: 0;\n  width: 0;\n}\n\n/* field mu count */\n.fieldmu {\n  color: #FFCE00;\n  font-size: 13px;\n  font-family: "coda",arial,helvetica,sans-serif; /*override leaflet-container */\n  text-align: center;\n  text-shadow: 0 0 0.2em black, 0 0 0.2em black, 0 0 0.2em black;\n  pointer-events: none;\n}\n\n\n/* chat ***************************************************************/\n\n#chatcontrols {\n  color: #FFCE00;\n  background: rgba(8, 48, 78, 0.9);\n  position: absolute;\n  left: 0;\n  z-index: 3001;\n  height: 26px;\n  padding-left:1px;\n}\n\n#chatcontrols.expand {\n  top: 0;\n  bottom: auto;\n}\n\n#chatcontrols a {\n  margin-left: -1px;\n  display: inline-block;\n  width: 94px;\n  text-align: center;\n  height: 24px;\n  line-height: 24px;\n  border: 1px solid #20A8B1;\n  vertical-align: top;\n}\n\n#chatcontrols a:first-child {\n  letter-spacing:-1px;\n  text-decoration: none !important;\n}\n\n#chatcontrols a.active {\n  border-color: #FFCE00;\n  border-bottom-width:0px;\n  font-weight:bold\n}\n\n#chatcontrols a.active + a {\n  border-left-color: #FFCE00\n}\n\n\n#chatcontrols .toggle {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  margin: 6px auto auto;\n}\n\n#chatcontrols .expand {\n  border-bottom: 10px solid #FFCE00;\n}\n\n#chatcontrols .shrink {\n  border-top: 10px solid #FFCE00;\n}\n\n\n#chat {\n  position: absolute;\n  width: 708px;\n  bottom: 23px;\n  left: 0;\n  z-index: 3000;\n  background: rgba(8, 48, 78, 0.9);\n  font-size: 12.6px;\n  color: #eee;\n  border: 1px solid #20A8B1;\n  border-bottom: 0;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\nem {\n  color: red;\n  font-style: normal;\n}\n\n#chat.expand {\n  height:auto;\n  top: 25px;\n}\n\n#chatpublic, #chatfull, #chatcompact {\n  display: none;\n}\n\n#chat > div {\n  overflow-x:hidden;\n  overflow-y:scroll;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 2px;\n  position:relative;\n}\n\n#chat table, #chatinput table {\n  width: 100%;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#chatinput table {\n  height: 100%;\n}\n\n#chat td, #chatinput td {\n  font-family: Verdana, sans-serif;\n  font-size: 12.6px;\n  vertical-align: top;\n  padding-bottom: 3px;\n}\n\n/* time */\n#chat td:first-child, #chatinput td:first-child {\n  width: 44px;\n  overflow: hidden;\n  padding-left: 2px;\n  color: #bbb;\n  white-space: nowrap;\n}\n\n#chat time {\n  cursor: help;\n}\n\n/* nick */\n#chat td:nth-child(2), #chatinput td:nth-child(2) {\n  width: 91px;\n  overflow: hidden;\n  padding-left: 2px;\n  white-space: nowrap;\n}\n\n#chat td .system_narrowcast {\n  color: #f66 !important;\n}\n\nmark {\n  background: transparent;\n}\n\n.invisep {\n  display: inline-block;\n  width: 1px;\n  height: 1px;\n  overflow:hidden;\n  color: transparent;\n}\n\n/* divider */\nsummary {\n  color: #bbb;\n  display: inline-block;\n  font-family: Verdana,sans-serif;\n  height: 16px;\n  overflow: hidden;\n  padding: 0 2px;\n  white-space: nowrap;\n  width: 100%;\n}\n\n#chatinput {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  padding: 0 2px;\n  background: rgba(8, 48, 78, 0.9);\n  width: 708px;\n  border: 1px solid #20A8B1;\n  z-index: 3001;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#chatinput td {\n  padding-bottom: 1px;\n  vertical-align: middle;\n}\n\n\n#chatinput input {\n  background: transparent;\n  font-size: 12.6px;\n  font-family: Verdana,sans-serif;\n  color: #EEEEEE;\n  width: 100%;\n  height: 100%;\n  padding:3px 4px 1px 4px;\n}\n\n\n\n/* sidebar ************************************************************/\n\n#sidebar > * {\n  border-bottom: 1px solid #20A8B1;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n\n\n#sidebartoggle .toggle {\n  border-bottom: 10px solid transparent;\n  border-top: 10px solid transparent;\n}\n\n#sidebartoggle .open {\n  border-right: 10px solid #FFCE00;\n}\n\n#sidebartoggle .close {\n  border-left: 10px solid #FFCE00;\n}\n\n/* player stats */\n#playerstat {\n  height: 30px;\n}\n\nh2 {\n  color: #ffce00;\n  font-size: 21px;\n  padding: 0 4px;\n  margin: 0;\n  cursor:help;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%;\n}\n\nh2 #name {\n  display: inline-block;\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 205px;\n  position: relative;\n}\n\nh2 #stats {\n  float: right;\n  height: 100%;\n  overflow: hidden;\n}\n\nh2 #signout {\n  font-size: 12px;\n  font-weight: normal;\n  line-height: 29px;\n  padding: 0 4px;\n  position: absolute;\n  top: 0;\n  right: 0;\n  background-color: rgba(8, 48, 78, 0.5);\n  display: none; /* starts hidden */\n}\n\nh2 sup, h2 sub {\n  display: block;\n  font-size: 11px;\n  margin-bottom: -2px;\n}\n\n\n/* gamestats */\n#gamestat {\n  height: 22px;\n}\n\n#gamestat span {\n  display: block;\n  float: left;\n  font-weight: bold;\n  cursor:help;\n  height: 21px;\n  line-height: 22px;\n}\n\n#gamestat .res {\n  background: #005684;\n  text-align: right;\n}\n\n#gamestat .enl {\n  background: #017f01;\n}\n\n\n/* geosearch input, and others */\ninput {\n  background-color: rgba(0, 0, 0, 0.3);\n  color: #ffce00;\n  height: 24px;\n  padding:0px 4px 0px 4px;\n  font-size: 12px;\n  border:0;\n  font-family:inherit;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n#geosearch{\n  width:272px;\n  background-color: transparent;\n}\n#geosearchwrapper {\n  height:25px;  \n  background-color: rgba(0, 0, 0, 0.3);\n}\n#geosearchwrapper img{\n  vertical-align: bottom;\n  margin-bottom: 2px;\n  cursor: pointer;\n}\n::-webkit-input-placeholder {\n  font-style: italic;\n}\n\n:-moz-placeholder {\n  font-style: italic;\n}\n\n::-moz-placeholder {\n  font-style: italic;\n}\n\n.leaflet-control-layers input {\n  height: auto;\n  padding: 0;\n}\n\n\n/* portal title and image */\nh3 {\n  font-size: 16px;\n  padding: 0 4px;\n  margin:0;\n  height: 23px;\n  width: 100%;\n  overflow:hidden;\n  text-overflow: "~";\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n.imgpreview {\n  height: 190px;\n  background: no-repeat center center;\n  background-size: contain;\n  cursor: help;\n  overflow: hidden;\n}\n\n.imgpreview img.hide {\n  display: none;\n}\n\n#level {\n  font-size: 40px;\n  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;\n  display: block;\n  margin-right: 15px;\n  text-align:right;\n}\n\n/* portal mods */\n.mods {\n  margin: 3px auto 1px auto;\n  width: 296px;\n  height: 67px;\n  text-align: center;\n}\n\n.mods span {\n  background-color: rgba(0, 0, 0, 0.3);\n  /* can’t use inline-block because Webkit’s implementation is buggy and\n   * introduces additional margins in random cases. No clear necessary,\n   * as that’s solved by setting height on .mods. */\n  display: block;\n  float:left;\n  height: 63px;\n  margin: 0 2px;\n  overflow: hidden;\n  padding: 2px;\n  text-align: center;\n  width: 63px;\n  cursor:help;\n  border: 1px solid #666;\n}\n\n.mods span:not([title]) {\n  cursor: auto;\n}\n\n.res .mods span, .res .meter {\n  border: 1px solid #0076b6;\n}\n.enl .mods span, .enl .meter {\n  border: 1px solid #017f01;\n}\n\n/* random details, resonator details */\n#randdetails, #resodetails {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  padding: 0 4px;\n  table-layout: fixed;\n  border-spacing: 0m;\n  border-collapse: collapse;\n}\n\n#randdetails td, #resodetails td {\n  overflow: hidden;\n  text-overflow: "~";\n  vertical-align: top;\n  white-space: nowrap;\n  width: 50%;\n  width: calc(50% - 62px);\n}\n\n#randdetails th, #resodetails th {\n  font-weight: normal;\n  text-align: right;\n  width: 62px;\n  padding:0px;\n  padding-right:4px;\n  padding-left:4px;\n}\n\n#randdetails th + th, #resodetails th + th {\n  text-align: left;\n  padding-right: 4px;\n  padding-left: 4px;\n}\n\n#randdetails td:first-child, #resodetails td:first-child {\n  text-align: right;\n  padding-left: 2px;\n}\n\n#randdetails td:last-child, #resodetails td:last-child {\n  text-align: left;\n  padding-right: 2px;\n}\n\n\n#randdetails {\n  margin-top: 4px;\n  margin-bottom: 5px;\n}\n\n\n#randdetails tt {\n  font-family: inherit;\n  cursor: help;\n}\n\n/* resonators */\n#resodetails {\n  margin-bottom: 0px;\n}\n\n.meter {\n  background: #000;\n  cursor: help;\n  display: inline-block;\n  height: 18px;\n  padding: 1px;\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  left: 0;\n  top: 0;\n}\n\n.meter span {\n  display: block;\n  height: 14px;\n}\n\n.meter-level {\n  position: absolute;\n  top: -2px;\n  left: 50%;\n  margin-left: -6px;\n  text-shadow: 0.0em 0.0em 0.3em #808080;\n}\n\n/* links below resos */\n\n.linkdetails {\n  margin-bottom: 0px;\n  text-align: center;\n}\n\n.linkdetails aside {\n  display: inline-block;\n  white-space: nowrap;\n  font-size: 12px;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n\n\n\n#toolbox {\n  font-size: 12px;\n  text-align: left;    /* centre didn\'t look as nice here as it did above in .linkdetails */\n}\n\n#toolbox > a {\n  margin-left: 5px;\n  margin-right: 5px;\n  white-space: nowrap;\n}\n\n/* a common portal display takes this much space (prevents moving\n * content when first selecting a portal) */\n\n#portaldetails {\n  min-height: 485px;\n  position: relative; /* so the below \'#portaldetails .close\' is relative to this */\n}\n\n#portaldetails .close {\n  position: absolute;\n  top: -2px;\n  right: 2px;\n  cursor: pointer;\n  color: #FFCE00;\n  font-family: "Arial", sans;\n  font-size: 16px;\n}\n\n\n/* update status */\n#updatestatus {\n  background-color: rgba(8, 48, 78, 0.9);\n  border-bottom: 0;\n  border-top: 1px solid #20A8B1;\n  border-left: 1px solid #20A8B1;\n  bottom: 0;\n  color: #ffce00;\n  font-size:13px;\n  padding: 4px;\n  position: fixed;\n  right: 0;\n  z-index:3002;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\n\n/* preview */\n\n#largepreview {\n  left: 50%;\n  position: fixed;\n  top: 50%;\n  z-index: 2000;\n}\n#largepreview img {\n  box-shadow: 0 0 40px #000;\n  border: 2px solid #f8ff5e;\n  background-color: rgba(8, 48, 78, 0.9);  /* as some images - eg ZipCar - have transparency */\n}\n\n/* tooltips, dialogs */\n.ui-tooltip, .ui-dialog {\n  max-width: 300px;\n  position: absolute;\n  z-index: 9999;\n  background-color: rgba(8, 48, 78, 0.9);\n  border: 1px solid #20A8B1;\n  color: #eee;\n  font: 13px/15px "Helvetica Neue", Arial, Helvetica, sans-serif;\n  padding: 2px 4px;\n}\n\n.ui-tooltip, .ui-dialog a {\n  color: #FFCE00;\n}\n\n.ui-dialog {\n  padding: 0;\n  border-radius: 2px;\n}\n\n.ui-widget-overlay {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index:9998;\n  background:  #444;\n  opacity: 0.6;\n}\n\n.ui-dialog-titlebar {\n  display: none;\n}\n\n.ui-dialog-content {\n  padding: 12px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  max-height: 600px !important;\n  max-width: 700px !important;\n}\n\n.ui-dialog-buttonpane {\n  padding: 12px;\n  border-top: 1px solid #20A8B1;\n}\n\n.ui-dialog-buttonset {\n  text-align: right;\n}\n\n.ui-dialog-buttonset button,\n.ui-dialog-content button {\n  padding: 2px;\n  min-width: 80px;\n  color: #FFCE00;\n  border: 1px solid #FFCE00;\n  background-color: rgba(8, 48, 78, 0.9);\n}\n\n.ui-dialog-buttonset button:hover {\n  text-decoration: underline;\n}\n\n.ui-dialog-aboutIITC {\n  max-width: 600px !important;\n  width: 600px !important;\n}\n\ntd {\n  padding: 0;\n  vertical-align: top;\n}\n\ntd + td {\n  padding-left: 4px;\n}\n\n#qrcode > canvas {\n  border: 8px solid white;\n} \n\n/* redeem results *****************************************************/\n.redeem-result {\n  font-size: 14px;\n  font-family: arial,helvetica,sans-serif;\n  table-layout: fixed;\n}\n\n.redeem-result tr > td:first-child {\n  width: 50px;\n  text-align: right;\n}\n\n.pl_nudge_date {\n  background-color: #724510;\n  border-left: 1px solid #ffd652;\n  border-bottom: 1px solid #ffd652;\n  border-top: 1px solid #ffd652;\n  color: #ffd652;\n  display: inline-block;\n  float: left;\n  font-size: 12px;\n  height: 18px;\n  text-align: center;\n}\n\n.pl_nudge_pointy_spacer {\n  background: no-repeat url(//commondatastorage.googleapis.com/ingress.com/img/nudge_pointy.png);\n  display: inline-block;\n  float: left;\n  height: 20px;\n  left: 47px;\n  width: 5px;\n}\n\n.pl_nudge_player {\n  cursor: pointer;\n}\n\n.pl_nudge_me {\n  color: #ffd652;\n}\n\n.RESISTANCE {\n  color: #00c2ff;\n}\n\n.ALIENS {\n  color: #28f428;\n}\n</style>'
   + '<style>/* required styles */\n\n.leaflet-map-pane,\n.leaflet-tile,\n.leaflet-marker-icon,\n.leaflet-marker-shadow,\n.leaflet-tile-pane,\n.leaflet-tile-container,\n.leaflet-overlay-pane,\n.leaflet-shadow-pane,\n.leaflet-marker-pane,\n.leaflet-popup-pane,\n.leaflet-overlay-pane svg,\n.leaflet-zoom-box,\n.leaflet-image-layer,\n.leaflet-layer {\n	position: absolute;\n	left: 0;\n	top: 0;\n	}\n.leaflet-container {\n	overflow: hidden;\n	-ms-touch-action: none;\n	}\n.leaflet-tile,\n.leaflet-marker-icon,\n.leaflet-marker-shadow {\n	-webkit-user-select: none;\n	   -moz-user-select: none;\n	        user-select: none;\n	-webkit-user-drag: none;\n	}\n.leaflet-marker-icon,\n.leaflet-marker-shadow {\n	display: block;\n	}\n/* map is broken in FF if you have max-width: 100% on tiles */\n.leaflet-container img {\n	max-width: none !important;\n	}\n/* stupid Android 2 doesn\'t understand "max-width: none" properly */\n.leaflet-container img.leaflet-image-layer {\n	max-width: 15000px !important;\n	}\n.leaflet-tile {\n	filter: inherit;\n	visibility: hidden;\n	}\n.leaflet-tile-loaded {\n	visibility: inherit;\n	}\n.leaflet-zoom-box {\n	width: 0;\n	height: 0;\n	}\n\n.leaflet-tile-pane    { z-index: 2; }\n.leaflet-objects-pane { z-index: 3; }\n.leaflet-overlay-pane { z-index: 4; }\n.leaflet-shadow-pane  { z-index: 5; }\n.leaflet-marker-pane  { z-index: 6; }\n.leaflet-popup-pane   { z-index: 7; }\n\n\n/* control positioning */\n\n.leaflet-control {\n	position: relative;\n	z-index: 7;\n	pointer-events: auto;\n	}\n.leaflet-top,\n.leaflet-bottom {\n	position: absolute;\n	z-index: 1000;\n	pointer-events: none;\n	}\n.leaflet-top {\n	top: 0;\n	}\n.leaflet-right {\n	right: 0;\n	}\n.leaflet-bottom {\n	bottom: 0;\n	}\n.leaflet-left {\n	left: 0;\n	}\n.leaflet-control {\n	float: left;\n	clear: both;\n	}\n.leaflet-right .leaflet-control {\n	float: right;\n	}\n.leaflet-top .leaflet-control {\n	margin-top: 10px;\n	}\n.leaflet-bottom .leaflet-control {\n	margin-bottom: 10px;\n	}\n.leaflet-left .leaflet-control {\n	margin-left: 10px;\n	}\n.leaflet-right .leaflet-control {\n	margin-right: 10px;\n	}\n\n\n/* zoom and fade animations */\n\n.leaflet-fade-anim .leaflet-tile,\n.leaflet-fade-anim .leaflet-popup {\n	opacity: 0;\n	-webkit-transition: opacity 0.2s linear;\n	   -moz-transition: opacity 0.2s linear;\n	     -o-transition: opacity 0.2s linear;\n	        transition: opacity 0.2s linear;\n	}\n.leaflet-fade-anim .leaflet-tile-loaded,\n.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {\n	opacity: 1;\n	}\n\n.leaflet-zoom-anim .leaflet-zoom-animated {\n	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\n	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\n	     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);\n	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);\n	}\n.leaflet-zoom-anim .leaflet-tile,\n.leaflet-pan-anim .leaflet-tile,\n.leaflet-touching .leaflet-zoom-animated {\n	-webkit-transition: none;\n	   -moz-transition: none;\n	     -o-transition: none;\n	        transition: none;\n	}\n\n.leaflet-zoom-anim .leaflet-zoom-hide {\n	visibility: hidden;\n	}\n\n\n/* cursors */\n\n.leaflet-clickable {\n	cursor: pointer;\n	}\n.leaflet-container {\n	cursor: -webkit-grab;\n	cursor:    -moz-grab;\n	}\n.leaflet-popup-pane,\n.leaflet-control {\n	cursor: auto;\n	}\n.leaflet-dragging,\n.leaflet-dragging .leaflet-clickable,\n.leaflet-dragging .leaflet-container {\n	cursor: move;\n	cursor: -webkit-grabbing;\n	cursor:    -moz-grabbing;\n	}\n\n\n/* visual tweaks */\n\n.leaflet-container {\n	background: #ddd;\n	outline: 0;\n	}\n.leaflet-container a {\n	color: #0078A8;\n	}\n.leaflet-container a.leaflet-active {\n	outline: 2px solid orange;\n	}\n.leaflet-zoom-box {\n	border: 2px dotted #05f;\n	background: white;\n	opacity: 0.5;\n	}\n\n\n/* general typography */\n.leaflet-container {\n	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;\n	}\n\n\n/* general toolbar styles */\n\n.leaflet-bar {\n	box-shadow: 0 1px 7px rgba(0,0,0,0.65);\n	-webkit-border-radius: 4px;\n	        border-radius: 4px;\n	}\n.leaflet-bar a {\n	background-color: #fff;\n	border-bottom: 1px solid #ccc;\n	width: 26px;\n	height: 26px;\n	line-height: 26px;\n	display: block;\n	text-align: center;\n	text-decoration: none;\n	color: black;\n	}\n.leaflet-bar a,\n.leaflet-control-layers-toggle {\n	background-position: 50% 50%;\n	background-repeat: no-repeat;\n	display: block;\n	}\n.leaflet-bar a:hover {\n	background-color: #f4f4f4;\n	}\n.leaflet-bar a:first-child {\n	-webkit-border-top-left-radius: 4px;\n	        border-top-left-radius: 4px;\n	-webkit-border-top-right-radius: 4px;\n	        border-top-right-radius: 4px;\n	}\n.leaflet-bar a:last-child {\n	-webkit-border-bottom-left-radius: 4px;\n	        border-bottom-left-radius: 4px;\n	-webkit-border-bottom-right-radius: 4px;\n	        border-bottom-right-radius: 4px;\n	border-bottom: none;\n	}\n.leaflet-bar a.leaflet-disabled {\n	cursor: default;\n	background-color: #f4f4f4;\n	color: #bbb;\n	}\n\n.leaflet-touch .leaflet-bar {\n	-webkit-border-radius: 10px;\n	        border-radius: 10px;\n	}\n.leaflet-touch .leaflet-bar a {\n	width: 30px;\n	height: 30px;\n	}\n.leaflet-touch .leaflet-bar a:first-child {\n	-webkit-border-top-left-radius: 7px;\n	        border-top-left-radius: 7px;\n	-webkit-border-top-right-radius: 7px;\n	        border-top-right-radius: 7px;\n	}\n.leaflet-touch .leaflet-bar a:last-child {\n	-webkit-border-bottom-left-radius: 7px;\n	        border-bottom-left-radius: 7px;\n	-webkit-border-bottom-right-radius: 7px;\n	        border-bottom-right-radius: 7px;\n	border-bottom: none;\n	}\n\n\n/* zoom control */\n\n.leaflet-control-zoom-in {\n	font: bold 18px \'Lucida Console\', Monaco, monospace;\n	}\n.leaflet-control-zoom-out {\n	font: bold 22px \'Lucida Console\', Monaco, monospace;\n	}\n\n.leaflet-touch .leaflet-control-zoom-in {\n	font-size: 22px;\n	line-height: 30px;\n	}\n.leaflet-touch .leaflet-control-zoom-out {\n	font-size: 28px;\n	line-height: 30px;\n	}\n\n\n/* layers control */\n\n.leaflet-control-layers {\n	box-shadow: 0 1px 7px rgba(0,0,0,0.4);\n	background: #f8f8f9;\n	-webkit-border-radius: 8px;\n	        border-radius: 8px;\n	}\n.leaflet-control-layers-toggle {\n	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAABrVBMVEUNDQ0PDw8QEBARERESEhIUFBQVFRUYGBgZGRkcHBwdHR0fHx8jIyMoKCgxMTE0NDQ1NTU2NjY4ODg5OTk6Ojo7Ozs+Pj4/Pz9AQEBBQUFDQ0NFRUVISEhMTExNTU1ZWVlaWlpmZmb///+rq6u1tbWHh4eOjo6oqKiampqdnZ2wsLC5ubmEhISLi4uZmZmSkpK1tbV6enqCgoKpqamJiYmurq66urp4eHh/f3+1tbXAwMBubm52dnacnJyEhISAgIBvb2+wsLC9vb15eXleXl5fX19mZmZoaGhsbGxtbW1ubm5vb29xcXF8fHx9fX1+fn6CgoKDg4OFhYWGhoaKioqNjY2Tk5OUlJSVlZWXl5eYmJibm5uenp6fn5+goKChoaGioqKpqamqqqqsrKyurq6vr6+xsbGzs7O0tLS1tbW2tra4uLi6urq9vb2+vr6/v7/BwcHDw8PExMTFxcXHx8fJycnKysrLy8vMzMzOzs7Pz8/Q0NDS0tLT09PV1dXW1tbX19fZ2dna2trb29vc3Nzd3d3f39/i4uLk5OTn5+fo6Ojt7e3u7u7z8/P09PRxWspKAAAARHRSTlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABISFxcXKC1DQ0hISE2IjIyMkMTEx8nr6+zs7O74+/v7/ChuOn8AAAGLSURBVCjPbZJLT8JAEIBnW1re3VKoETloSLjKzXhS4w836smQcCAaXyQEYxBJoXRLeW1p192GIoh7aabfzs63O4OqEC8/gYGsViyO0S9K42u4Id4GbpBkXJYU8Id3Nl2GO0gzrtIS/4bzW9uhS7ZBKXxRkFG0hwXjezKZByxCinZeSoqUAGSRuBw+2N6CcVTQzjQBGJUgVEVu6DbcgYdOcb0gYrZgCkc+SomAjlsE1XHZ1CWgVI2KsYCqKoSO1Sf8QAMf6khW0FqD+QFzvsmbqAXJgyw2FPEbBPZtMh18srXGqs0KGSngteRwNka1RMN9glij01dzXIAtPFqu/tGY9rxcBmZerpLd15h8+KAc59caTdjR+IKjWOM1esNYQ47kg7VGc0sjiRWu4ZPlXw3w25NII1/jR29pFLP8rqRLQT3B/ObTUayRMMyiLjR6UBEazsiy3+NWZrGpR40RDXEs8rg9ALpm6tFrOJb7vDsbIBtmTgPXs+wu2xu2DM7DhLyE/8xhR6pDawMAfgAd2djeY/eg2wAAAABJRU5ErkJggg==);\n	width: 36px;\n	height: 36px;\n	}\n.leaflet-touch .leaflet-control-layers-toggle {\n	width: 44px;\n	height: 44px;\n	}\n.leaflet-control-layers .leaflet-control-layers-list,\n.leaflet-control-layers-expanded .leaflet-control-layers-toggle {\n	display: none;\n	}\n.leaflet-control-layers-expanded .leaflet-control-layers-list {\n	display: block;\n	position: relative;\n	}\n.leaflet-control-layers-expanded {\n	padding: 6px 10px 6px 6px;\n	color: #333;\n	background: #fff;\n	}\n.leaflet-control-layers-selector {\n	margin-top: 2px;\n	position: relative;\n	top: 1px;\n	}\n.leaflet-control-layers label {\n	display: block;\n	}\n.leaflet-control-layers-separator {\n	height: 0;\n	border-top: 1px solid #ddd;\n	margin: 5px -10px 5px -6px;\n	}\n\n\n/* attribution and scale controls */\n\n.leaflet-container .leaflet-control-attribution {\n	background-color: rgba(255, 255, 255, 0.7);\n	box-shadow: 0 0 5px #bbb;\n	margin: 0;\n	}\n.leaflet-control-attribution,\n.leaflet-control-scale-line {\n	padding: 0 5px;\n	color: #333;\n	}\n.leaflet-container .leaflet-control-attribution,\n.leaflet-container .leaflet-control-scale {\n	font-size: 11px;\n	}\n.leaflet-left .leaflet-control-scale {\n	margin-left: 5px;\n	}\n.leaflet-bottom .leaflet-control-scale {\n	margin-bottom: 5px;\n	}\n.leaflet-control-scale-line {\n	border: 2px solid #777;\n	border-top: none;\n	color: black;\n	line-height: 1.1;\n	padding: 2px 5px 1px;\n	font-size: 11px;\n	text-shadow: 1px 1px 1px #fff;\n	background-color: rgba(255, 255, 255, 0.5);\n	box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2);\n	white-space: nowrap;\n	overflow: hidden;\n	}\n.leaflet-control-scale-line:not(:first-child) {\n	border-top: 2px solid #777;\n	border-bottom: none;\n	margin-top: -2px;\n	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n	}\n.leaflet-control-scale-line:not(:first-child):not(:last-child) {\n	border-bottom: 2px solid #777;\n	}\n\n.leaflet-touch .leaflet-control-attribution,\n.leaflet-touch .leaflet-control-layers,\n.leaflet-touch .leaflet-control-zoom {\n	box-shadow: none;\n	}\n.leaflet-touch .leaflet-control-layers,\n.leaflet-touch .leaflet-control-zoom {\n	border: 4px solid rgba(0,0,0,0.3);\n	}\n\n\n/* popup */\n\n.leaflet-popup {\n	position: absolute;\n	text-align: center;\n	}\n.leaflet-popup-content-wrapper {\n	padding: 1px;\n	text-align: left;\n	-webkit-border-radius: 20px;\n	        border-radius: 20px;\n	}\n.leaflet-popup-content {\n	margin: 14px 20px;\n	line-height: 1.4;\n	}\n.leaflet-popup-content p {\n	margin: 18px 0;\n	}\n.leaflet-popup-tip-container {\n	margin: 0 auto;\n	width: 40px;\n	height: 20px;\n	position: relative;\n	overflow: hidden;\n	}\n.leaflet-popup-tip {\n	width: 15px;\n	height: 15px;\n	padding: 1px;\n\n	margin: -8px auto 0;\n\n	-webkit-transform: rotate(45deg);\n	   -moz-transform: rotate(45deg);\n	    -ms-transform: rotate(45deg);\n	     -o-transform: rotate(45deg);\n	        transform: rotate(45deg);\n	}\n.leaflet-popup-content-wrapper, .leaflet-popup-tip {\n	background: white;\n\n	box-shadow: 0 3px 14px rgba(0,0,0,0.4);\n	}\n.leaflet-container a.leaflet-popup-close-button {\n	position: absolute;\n	top: 0;\n	right: 0;\n	padding: 4px 5px 0 0;\n	text-align: center;\n	width: 18px;\n	height: 14px;\n	font: 16px/14px Tahoma, Verdana, sans-serif;\n	color: #c3c3c3;\n	text-decoration: none;\n	font-weight: bold;\n	background: transparent;\n	}\n.leaflet-container a.leaflet-popup-close-button:hover {\n	color: #999;\n	}\n.leaflet-popup-scrolled {\n	overflow: auto;\n	border-bottom: 1px solid #ddd;\n	border-top: 1px solid #ddd;\n	}\n\n\n/* div icon */\n\n.leaflet-div-icon {\n	background: #fff;\n	border: 1px solid #666;\n	}\n.leaflet-editing-icon {\n	-webkit-border-radius: 2px;\n	        border-radius: 2px;\n	}\n</style>'
 //note: smartphone.css injection moved into code/smartphone.js
   + '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Coda"/>';
@@ -371,8 +371,8 @@ window.setupMap = function() {
 		mqMap,
 		new L.Google('INGRESS'),
 		new L.Google('ROADMAP'),
-		new L.Google('SATELLITE'),
-		new L.Google('HYBRID')
+		new L.Google('SATELLITE',{maxZoom:20}),
+		new L.Google('HYBRID',{maxZoom:20})
   ];
 
 
@@ -714,7 +714,7 @@ d+"px").css("background-color",a.isDark(e,i)?h.foreground:h.background).appendTo
 function boot() {
   window.debug.console.overwriteNativeIfRequired();
 
-  console.log('loading done, booting. Built: 2013-04-20-124221');
+  console.log('loading done, booting. Built: 2013-04-24-160159');
   if(window.deviceID) console.log('Your device ID: ' + window.deviceID);
   window.runOnSmartphonesBeforeBoot();
 
@@ -1402,12 +1402,12 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
   var s = 'style="cursor:pointer; color:'+color+'"';
   var title = nick.length >= 8 ? 'title="'+nick+'" class="help"' : '';
   var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
-  return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" onclick="window.chat.nicknameClicked(event, \'' + nick + '\')" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
+  return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
 }
 
 window.chat.addNickname= function(nick){
     var c = document.getElementById("chattext");
-    c.value = [c.value, nick, " "].join(" ").trim() + " ";
+    c.value = [c.value.trim(), nick].join(" ").trim() + " ";
     c.focus()
 }
 
@@ -1581,7 +1581,11 @@ window.chat.setup = function() {
   window.requests.addRefreshFunction(chat.request);
 
   var cls = PLAYER.team === 'ALIENS' ? 'enl' : 'res';
-  $('#chatinput mark').addClass(cls)
+  $('#chatinput mark').addClass(cls);
+
+  $(window).on('click', '.nickname', function(event) {
+    window.chat.nicknameClicked(event, $(this).text());
+  });
 }
 
 
@@ -2047,34 +2051,30 @@ window.requestData = function() {
   requests.abort();
   cleanUp();
 
-  var magic = convertCenterLat(map.getCenter().lat);
-  var R = calculateR(magic);
-
   var bounds = map.getBounds();
-  // convert to point values
-  topRight = convertLatLngToPoint(bounds.getNorthEast(), magic, R);
-  bottomLeft = convertLatLngToPoint(bounds.getSouthWest() , magic, R);
-  // how many quadrants intersect the current view?
-  quadsX = Math.abs(bottomLeft.x - topRight.x);
-  quadsY = Math.abs(bottomLeft.y - topRight.y);
+
+  var x1 = lngToTile(bounds.getNorthWest().lng, map.getZoom());
+  var x2 = lngToTile(bounds.getNorthEast().lng, map.getZoom());
+  var y1 = latToTile(bounds.getNorthWest().lat, map.getZoom());
+  var y2 = latToTile(bounds.getSouthWest().lat, map.getZoom());
 
   // will group requests by second-last quad-key quadrant
   tiles = {};
 
   // walk in x-direction, starts right goes left
-  for(var i = 0; i <= quadsX; i++) {
-    var x = Math.abs(topRight.x - i);
-    var qk = pointToQuadKey(x, topRight.y);
-    var bnds = convertPointToLatLng(x, topRight.y, magic, R);
-    if(!tiles[qk.slice(0, -1)]) tiles[qk.slice(0, -1)] = [];
-    tiles[qk.slice(0, -1)].push(generateBoundsParams(qk, bnds));
-
-    // walk in y-direction, starts top, goes down
-    for(var j = 1; j <= quadsY; j++) {
-      var qk = pointToQuadKey(x, topRight.y + j);
-      var bnds = convertPointToLatLng(x, topRight.y + j, magic, R);
-      if(!tiles[qk.slice(0, -1)]) tiles[qk.slice(0, -1)] = [];
-      tiles[qk.slice(0, -1)].push(generateBoundsParams(qk, bnds));
+  for (var x = x1; x <= x2; x++) {
+    for (var y = y1; y <= y2; y++) {
+      var tile_id = pointToTileId(map.getZoom(), x, y);
+      var bucket = Math.floor(x / 2) + "" + Math.floor(y / 2);
+      if (!tiles[bucket])
+        tiles[bucket] = [];
+      tiles[bucket].push(generateBoundsParams(
+        tile_id,
+        tileToLat(y + 1, map.getZoom()),
+        tileToLng(x, map.getZoom()),
+        tileToLat(y, map.getZoom()),
+        tileToLng(x + 1, map.getZoom())
+      ));
     }
   }
 
@@ -2082,7 +2082,7 @@ window.requestData = function() {
   portalRenderLimit.init();
   // finally send ajax requests
   $.each(tiles, function(ind, tls) {
-    data = { minLevelOfDetail: -1 };
+    data = { zoom: map.getZoom() };
     data.boundsParamsList = tls;
     window.requests.add(window.postAjax('getThinnedEntitiesV2', data, window.handleDataResponse, window.handleFailedRequest));
   });
@@ -2113,7 +2113,7 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
   // portals can be brought to front, this costs extra time. They need
   // to be in the foreground, or they cannot be clicked. See
   // https://github.com/Leaflet/Leaflet/issues/185
-  var ppp = [];
+  var ppp = {};
   var p2f = {};
   $.each(m, function(qk, val) {
     $.each(val.deletedGameEntityGuids || [], function(ind, guid) {
@@ -2150,7 +2150,7 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
           ent[2].imageByUrl = {'imageUrl': DEFAULT_PORTAL_IMG};
         }
 
-        ppp.push(ent); // delay portal render
+        ppp[ent[0]] = ent; // delay portal render
       } else if(ent[2].edge !== undefined) {
         renderLink(ent);
       } else if(ent[2].capturedRegion !== undefined) {
@@ -2167,6 +2167,25 @@ window.handleDataResponse = function(data, textStatus, jqXHR) {
   });
 
   $.each(ppp, function(ind, portal) {
+    if ('portalV2' in portal[2] && 'linkedEdges' in portal[2].portalV2) {
+      $.each(portal[2].portalV2.linkedEdges, function (ind, edge) {
+        if (!ppp[edge.otherPortalGuid])
+          return;
+        renderLink([
+          edge.edgeGuid,
+          portal[1],
+          {
+            "controllingTeam": portal[2].controllingTeam,
+            "edge": {
+              "destinationPortalGuid": edge.isOrigin ? ppp[edge.otherPortalGuid][0] : portal[0],
+              "destinationPortalLocation": edge.isOrigin ? ppp[edge.otherPortalGuid][2].locationE6 : portal[2].locationE6,
+              "originPortalGuid": !edge.isOrigin ? ppp[edge.otherPortalGuid][0] : portal[0],
+              "originPortalLocation": !edge.isOrigin ? ppp[edge.otherPortalGuid][2].locationE6 : portal[2].locationE6
+            }
+          }
+        ]);
+      });
+    }
     if(portal[2].portalV2['linkedFields'] === undefined) {
       portal[2].portalV2['linkedFields'] = [];
     }
@@ -2699,83 +2718,49 @@ window.findEntityInLeaflet = function(layerGroup, entityHash, guid) {
 }
 
 
-
-
 // MAP DATA REQUEST CALCULATORS //////////////////////////////////////
 // Ingress Intel splits up requests for map data (portals, links,
 // fields) into tiles. To get data for the current viewport (i.e. what
 // is currently visible) it first calculates which tiles intersect.
 // For all those tiles, it then calculates the lat/lng bounds of that
 // tile and a quadkey. Both the bounds and the quadkey are “somewhat”
-// required to get complete data. No idea how the projection between
-// lat/lng and tiles works.
-// What follows now are functions that allow conversion between tiles
-// and lat/lng as well as calculating the quad key. The variable names
-// may be misleading.
-// The minified source for this code was in gen_dashboard.js after the
-// “// input 89” line (alternatively: the class was called “Xe”).
+// required to get complete data.
+//
+// Convertion functions courtesy of
+// http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
 
-window.convertCenterLat = function(centerLat) {
-  return Math.round(256 * 0.9999 * Math.abs(1 / Math.cos(centerLat * DEG2RAD)));
+window.lngToTile = function(lng, zoom) {
+  return Math.floor((lng + 180) / 360 * Math.pow(2, zoom));
 }
 
-window.calculateR = function(convCenterLat) {
-  return 1 << window.map.getZoom() - (convCenterLat / 256 - 1);
+window.latToTile = function(lat, zoom) {
+  return Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) +
+    1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
 }
 
-window.convertLatLngToPoint = function(latlng, magic, R) {
-  var x = (magic/2 + latlng.lng * magic / 360)*R;
-  var l = Math.sin(latlng.lat * DEG2RAD);
-  var y =  (magic/2 + 0.5*Math.log((1+l)/(1-l)) * -(magic / (2*Math.PI)))*R;
-  return {x: Math.floor(x/magic), y: Math.floor(y/magic)};
+window.tileToLng = function(x, zoom) {
+  return x / Math.pow(2, zoom) * 360 - 180;
 }
 
-window.convertPointToLatLng = function(x, y, magic, R) {
-  var e = {};
-  e.sw = {
-    // orig function put together from all over the place
-    // lat: (2 * Math.atan(Math.exp((((y + 1) * magic / R) - (magic/ 2)) / (-1*(magic / (2 * Math.PI))))) - Math.PI / 2) / (Math.PI / 180),
-    // shortened version by your favorite algebra program.
-    lat: (360*Math.atan(Math.exp(Math.PI - 2*Math.PI*(y+1)/R)))/Math.PI - 90,
-    lng: 360*x/R-180
-  };
-  e.ne = {
-    //lat: (2 * Math.atan(Math.exp(((y * magic / R) - (magic/ 2)) / (-1*(magic / (2 * Math.PI))))) - Math.PI / 2) / (Math.PI / 180),
-    lat: (360*Math.atan(Math.exp(Math.PI - 2*Math.PI*y/R)))/Math.PI - 90,
-    lng: 360*(x+1)/R-180
-  };
-  return e;
+window.tileToLat = function(y, zoom) {
+  var n = Math.PI - 2 * Math.PI * y / Math.pow(2, zoom);
+  return 180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
 }
 
-// calculates the quad key for a given point. The point is not(!) in
-// lat/lng format.
-window.pointToQuadKey = function(x, y) {
-  var quadkey = [];
-  for(var c = window.map.getZoom(); c > 0; c--) {
-    //  +-------+   quadrants are probably ordered like this
-    //  | 0 | 1 |
-    //  |---|---|
-    //  | 2 | 3 |
-    //  |---|---|
-    var quadrant = 0;
-    var e = 1 << c - 1;
-    (x & e) != 0 && quadrant++;               // push right
-    (y & e) != 0 && (quadrant++, quadrant++); // push down
-    quadkey.push(quadrant);
-  }
-  return quadkey.join("");
+window.pointToTileId = function(zoom, x, y) {
+  return zoom + "_" + x + "_" + y;
 }
 
-// given quadkey and bounds, returns the format as required by the
+// given tile id and bounds, returns the format as required by the
 // Ingress API to request map data.
-window.generateBoundsParams = function(quadkey, bounds) {
+window.generateBoundsParams = function(tile_id, minLat, minLng, maxLat, maxLng) {
   return {
-    id: quadkey,
-    qk: quadkey,
-    minLatE6: Math.round(bounds.sw.lat * 1E6),
-    minLngE6: Math.round(bounds.sw.lng * 1E6),
-    maxLatE6: Math.round(bounds.ne.lat * 1E6),
-    maxLngE6: Math.round(bounds.ne.lng * 1E6)
+    id: tile_id,
+    qk: tile_id,
+    minLatE6: Math.round(minLat * 1E6),
+    minLngE6: Math.round(minLng * 1E6),
+    maxLatE6: Math.round(maxLat * 1E6),
+    maxLngE6: Math.round(maxLng * 1E6)
   };
 }
 
@@ -3797,7 +3782,8 @@ window.runOnSmartphonesAfterBoot = function() {
 // UTILS + MISC  ///////////////////////////////////////////////////////
 
 window.aboutIITC = function(){
-  var v = 'naglfar-2013-04-20-124221'
+  var v = 'naglfar-2013-04-24-160159';
+  var attrib = '<p>This project is licensed under the permissive ISC license. Parts imported from other projects remain under their respective licenses:</p><ul><li><a href="https://github.com/bryanwoods/autolink-js">autolink-js by Bryan Woods; MIT</a></li><li><a href="https://github.com/chriso/load.js">load.js by Chris O\'Hara; MIT</a></li><li><a href="http://leafletjs.com/">leaflet.js; custom license (but appears free)</a></li><li><a href="https://github.com/Leaflet/Leaflet.draw">leaflet.draw.js; by jacobtoye; MIT</a></li><li><a href="https://github.com/shramov/leaflet-plugins"><code>leaflet_google.js</code> by Pavel Shramov; same as Leaftlet</a> (modified, though)</li><li><a href="https://github.com/jeromeetienne/jquery-qrcode">jquery.qrcode.js by Jerome Etienne; MIT</a></li><li><a href="https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet">oms.min.js by George MacKerron; MIT</a></li><li><a href="https://github.com/richadams/jquery-taphold">taphold.js by Rich Adams; unknown</a></li><li><a href="https://github.com/kartena/Leaflet.Pancontrol">L.Control.Pan.js by Kartena AB; same as Leaftlet</a></li><li><a href="https://github.com/kartena/Leaflet.zoomslider">L.Control.Zoomslider.js by Kartena AB; same as Leaftlet</a></li><li>StackOverflow-CopyPasta is attributed in the source; <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-Wiki</a></li><li>all Ingress/Niantic related stuff obviously remains non-free and is still copyrighted by Niantic/Google</li></ul>';
   var a = ''
   + '  <div><b>About IITC</b></div> '
   + '  <div>Ingress Intel Total Conversion</div> '
@@ -3816,8 +3802,11 @@ window.aboutIITC = function(){
   + '    MapQuest OSM tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
   + '  </div>'
   + '  <hr>'
-  + '  <div>Version: ' + v + '</div>';
-  alert(a);
+  + '  <div>Version: ' + v + '</div>'
+  + '  <hr>'
+  + '  <div>' + attrib + '</div>';
+  alert(a, true, function() {$('.ui-dialog').removeClass('ui-dialog-aboutIITC');});
+  $('.ui-dialog').addClass('ui-dialog-aboutIITC');
 }
 
 
@@ -3993,8 +3982,8 @@ window.renderLimitReached = function(ratio) {
 
 window.getMinPortalLevel = function() {
   var z = map.getZoom();
-  if(z >= 16) return 0;
-  var conv = ['impossible', 8,7,7,6,6,5,5,4,4,3,3,2,2,1,1];
+  if(z >= 17) return 0;
+  var conv = ['impossible', 8,8,8,7,7,6,6,5,4,4,3,3,2,2,1,1];
   var minLevelByRenderLimit = portalRenderLimit.getMinLevel();
   var result = minLevelByRenderLimit > conv[z]
     ? minLevelByRenderLimit
